@@ -1,0 +1,58 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Checkout') {
+            steps {
+                // Checkout source code from version control (e.g., Git)
+                git 'https://github.com/your/repository.git'
+            }
+        }
+
+        stage('Build') {
+            steps {
+                // Build the Node.js backend
+                sh 'cd backend && npm install'
+                
+                // Build the React frontend
+                sh 'cd frontend && npm install && npm run build'
+            }
+        }
+
+        stage('Test') {
+            steps {
+                // Run tests for both backend and frontend
+                sh 'cd backend && npm test'
+                sh 'cd frontend && npm test'
+            }
+        }
+
+        stage('Artifactory') {
+            steps {
+                // Build Docker images for backend and frontend
+                sh 'docker build -t backend:latest backend'
+                sh 'docker build -t frontend:latest frontend'
+            }
+        }
+
+        stage('Devlop') {
+            steps {
+                // Deploy Docker containers to a container orchestration platform (e.g., Kubernetes)
+                // This step may vary based on your deployment target
+                sh 'kubectl apply -f kubernetes/deployment.yaml'
+            }
+        }
+	stage('UAT') {
+            steps {
+		//testing the code with usecases
+            }
+        }
+stage('Production') {
+            steps {
+		//Code get deployed 
+            }
+        }
+
+
+    }
+
